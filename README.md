@@ -13,7 +13,7 @@ Built with Python, Streamlit, and the Google Gemini API, Cognita can understand 
    * **DDL (Data Definition Language):** `CREATE`, `ALTER`, `DROP`
 
    * **DML (Data Manipulation Language):** `INSERT`, `UPDATE`, `DELETE`
-* DQL (Data Query Language): `SELECT`, `SHOW TABLES`
+   * **DQL (Data Query Language):** `SELECT`, `SHOW TABLES`
 * **Intelligent, Multi-Step AI Pipeline:** Uses a sophisticated workflow to ensure commands are understood correctly and executed in the proper context.
 * **Dynamic Schema Awareness:** Automatically discovers tables in the database and fetches the relevant table's structure to provide context to the AI, ensuring highly accurate queries.  
 * **Interactive UI:** A clean and modern user interface built with Streamlit, featuring a Catppuccin-inspired theme.
