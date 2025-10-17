@@ -8,10 +8,13 @@ Built with Python, Streamlit, and the Google Gemini API, Cognita can understand 
 
 * **Natural Language to SQL:** Ask questions or give commands in plain English. 
 * **Full Spectrum SQL Support:**  
-  * **DQL:** Fetches data using `SELECT`.  
-  * **DML:** Manipulates data with `INSERT`, `UPDATE`, and `DELETE`.  
-  * **DDL:** Manages database structure with `CREATE`, `ALTER`, and `DROP`.  
-* **Intelligent Command Classification:** Automatically detects the user's intent (DDL vs. DML/DQL) to follow the correct execution path.  
+   * **Server-Level Queries:** `SHOW DATABASES`
+
+   * **DDL (Data Definition Language):** `CREATE`, `ALTER`, `DROP`
+
+   * **DML (Data Manipulation Language):** `INSERT`, `UPDATE`, `DELETE`
+* DQL (Data Query Language): `SELECT`, `SHOW TABLES`
+* **Intelligent, Multi-Step AI Pipeline:** Uses a sophisticated workflow to ensure commands are understood correctly and executed in the proper context.
 * **Dynamic Schema Awareness:** Automatically discovers tables in the database and fetches the relevant table's structure to provide context to the AI, ensuring highly accurate queries.  
 * **Interactive UI:** A clean and modern user interface built with Streamlit, featuring a Catppuccin-inspired theme.
 
@@ -19,23 +22,29 @@ Built with Python, Streamlit, and the Google Gemini API, Cognita can understand 
 
 Cognita doesn't just make a single, naive call to an AI. It follows a robust, multi-step process to ensure accuracy and safety, making it a truly intelligent assistant.
 
-1. **AI Command Classification:** First, the user's prompt is sent to the Gemini API to classify the command type (DDL_DATABASE, DDL_TABLE, DML, or DQL). This determines the entire workflow.  
-2. **Smart Connection Strategy:**
-* If the command is DDL_DATABASE (e.g., "create a database"), the app intelligently connects to the MySQL server without a pre-selected database.
-* For all other commands, a database name is required, and the app connects to it directly.
-3. **Context-Aware Execution Path:**
-* Database Commands: If the intent is to manage a database, the SQL is generated and executed immediately.
-* CREATE TABLE Commands: A special, direct path is taken that bypasses table discovery, allowing the first table to be created in an empty database.
-* All Other Table Commands (ALTER, DROP, SELECT, INSERT, etc.): The app follows the full discovery pipeline:
+1. **AI Command Classification:** First, the user's prompt is sent to the Gemini API to classify the command type. This determines the entire workflow.  
+2. **AI-Driven Connection Strategy:** Based on this precise classification, the app intelligently decides how to connect to the MySQL server:
 
-  1. Fetches a list of all existing tables.
+   * For server-level commands (`SERVER_LEVEL_QUERY`, `DDL_DATABASE`), it connects to the server without requiring a specific database name.
 
-  2. Asks the AI to identify the target table from the prompt.
+   * For all other commands, it requires a database name from the user and connects directly to it.
 
-  3. Fetches the specific schema for that table.
+3. **Context-Aware Execution Path:** The app then follows a specific logic path tailored to the command type:
+   * Server-Level Path: For commands like SHOW DATABASES, the app generates and executes the SQL directly.
 
-  4. Generates the final, context-aware SQL query.
-4. **Execution & Display:** The generated query is executed, and the results (data, row count, or success message) are displayed to the user.
+   * Create Table Path: For CREATE TABLE commands, the app bypasses table discovery (as none may exist) and generates the SQL directly, solving the "empty database" problem.
+
+   * Context-Dependent Path: For all other table-level commands (ALTER, DROP, DML, DQL), the app executes its full discovery pipeline:
+
+      1.  Fetches a list of all available tables in the database.
+
+      2.  Asks the AI to identify the target table from the user's prompt, using the discovered list as a set of valid options.
+
+      3. Fetches the specific schema (column names and data types) for the identified table.
+
+      4. Generates the final, context-aware SQL query using this schema.
+
+4. **Execution & Display:** The final, validated query is executed against the database, and the results (data, row count, or a success message) are displayed to the user.
 
 ## **🛠️ Technology Stack**
 
@@ -70,7 +79,7 @@ Follow these steps to get Cognita running on your local machine.
 
 3. **Install the required libraries:**  
    ```
-   pip install \-r requirements.txt
+   pip install -r requirements.txt
    ```
 
 4. **Set up your environment variables:**  

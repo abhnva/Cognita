@@ -62,15 +62,19 @@ def identify_table_from_prompt(user_question, available_tables):
 
 
 def classify_command_type(user_question):
-    """Uses Gemini to classify the command as DDL, DML, or DQL."""
+    #Uses Gemini to classify the command as DDL, DML, or DQL.
     prompt = f"""
     Classify the following user command as one of four types: DDL_DATABASE, DDL_TABLE, DML, or DQL.
-    - DDL_DATABASE: For commands that manage entire databases (CREATE DATABASE, DROP DATABASE, etc.).
-    - DDL_TABLE: For commands that manage table structure (CREATE TABLE, ALTER TABLE, DROP TABLE).
+    - DDL_DATABASE: For commands that CREATE or DROP a database.
+    - DDL_CREATE_TABLE: For commands that create a new table.
+    - DDL_ALTER_TABLE: For commands that modify an existing table structure.
+    - DDL_DROP_TABLE: For commands that delete an existing table.
     - DML: For commands that manage data within tables (INSERT, UPDATE, DELETE).
-    - DQL: For commands that retrieve data (SELECT).
+    - DQL_SHOW: For commands that list things within a database, like SHOW TABLES.
+    - DQL: For general data retrieval from a specific table (SELECT).
+    - SERVER_LEVEL_QUERY: For queries that run on the server, not in a specific database, like SHOW DATABASES.
 
-    Your response must be a single word: DDL_DATABASE, DDL_TABLE, DML, or DQL.
+    Your response must be a single word: DDL_DATABASE, DDL_CREATE_TABLE, DDL_ALTER_TABLE, DDL_DROP_TABLE, DML, DQL_SHOW, DQL, or SERVER_LEVEL_QUERY.
 
     User Command: "{user_question}"
 
@@ -80,7 +84,7 @@ def classify_command_type(user_question):
         model = genai.GenerativeModel('gemini-2.5-flash')
         response = model.generate_content(prompt)
         classification = response.text.strip().upper()
-        if classification in ["DDL_DATABASE", "DDL_TABLE", "DML", "DQL"]:
+        if classification in ["DDL_DATABASE", "DDL_CREATE_TABLE", "DDL_ALTER_TABLE", "DDL_DROP_TABLE", "DML", "DQL_SHOW", "DQL", "SERVER_LEVEL_QUERY"]:
             print(f"AI classified command as: {classification}")
             return classification
         return "UNKNOWN"
