@@ -98,11 +98,11 @@ def get_sql_from_gemini(user_question, db_schema):
 
     prompt = f"""
     You are a MySQL expert. Your task is to convert a natural language question into a single,
-    executable MySQL query. You must only respond with the SQL query and nothing else.
-
+    executable MySQL query. You must only respond with the SQL query and nothing else. If the question does not
+    make sense, lacks information, or cannot be answered with SQL, respond with the single word INCOMPLETE.
     Given the following database schema:
     {db_schema}
-
+    
     Convert this user question into a MySQL query: "{user_question}"
 
     MySQL Query:
